@@ -9,22 +9,23 @@ module.exports = {
     index: './src/index.js'
   },
   output: {
-    path: path.resolve(__dirname, '..', 'dist')
+    path: path.resolve(__dirname, '..', 'dist') //打包文件输出目录
   },
   module: {
     rules: [
       {
+        enforce: "pre",
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [
-          'babel-loader',
-          {
-            loader: 'eslint-loader',
-            options: {
-              fix: true
-            }
-          }
-        ]
+        loader: "eslint-loader",
+        options: {
+          fix: true
+        }
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: 'babel-loader'
       },
       {
         test: /\.(png|jpg|jpeg|gif)$/,
@@ -68,12 +69,12 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '..', 'index.html'),
+      template: path.resolve(__dirname, '../src/index.html'),
       title: 'webpack4 boilerplate',
       favicon: path.resolve(__dirname, '../src/favicon.ico'),
       filename: 'index.html',
       minify: {
-        collapseWhitespace: true
+        collapseWhitespace: true // 邮件空白符与换行符
       }
     }),
     new CleanWebpackPlugin(),

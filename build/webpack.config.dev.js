@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+// eslint-disable-next-line no-undef
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
@@ -6,8 +8,9 @@ const commonConfig = require('./webpack.config.base.js');
 module.exports = merge(commonConfig, {
   mode: 'development',
   output: {
-    filename: '[name].js',
-    chunkFilename: '[name].js'
+    publicPath: '/', // js 引用的路径或者 CDN 地址
+    filename: '[name].js', // 打包后生成的 js 文件
+    chunkFilename: '[name].js' // 代码拆分后的文件名
   },
   module: {
     rules: [
@@ -18,7 +21,7 @@ module.exports = merge(commonConfig, {
           {
             loader: 'css-loader',
             options: {
-              importLoaders: 2
+              importLoaders: 2 // 在一个css中引用另一个css，也会执行前两个loader。
             }
           },
           'sass-loader',
@@ -34,16 +37,20 @@ module.exports = merge(commonConfig, {
     hot: true,
     overlay: true,
     proxy: {
-      '/api': {
+      '/api/': {
         target: 'https://api.github.com/',
         changeOrigin: true,
         logLevel: 'debug',
         headers: {
           Cookie: ''
-        }
+        },
+        pathRewrite: {'^/api': ''},
       }
     },
-    historyApiFallback: true
+    historyApiFallback: {
+      // HTML5 history模式
+      rewrites: [{from: /.*/, to: '/index.html'}]
+    }
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
